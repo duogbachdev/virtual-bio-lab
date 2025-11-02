@@ -79,32 +79,36 @@ export default function TestTube({
   const liquidHeight = (liquidLevel / 100) * maxLiquidHeight;
   const liquidY = 120 - liquidHeight;
 
+  // Render with native HTML5 drag-and-drop on outer div
+  // and Framer Motion animations on inner motion.div
   return (
-    <motion.div
+    <div
       className={`relative cursor-pointer ${className}`}
-      onClick={onClick}
       draggable={draggable}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      animate={
-        isShaking ? {
-          rotate: [0, -8, 8, -8, 8, 0],
-          transition: { duration: 0.6 }
-        } : heated ? {
-          y: [0, -2, 0]
-        } : isPouringFrom ? {
-          rotate: 45,
-          x: 20,
-          y: -10
-        } : {}
-      }
-      transition={heated ? { repeat: Infinity, duration: 0.5 } : {}}
     >
+      <motion.div
+        onClick={onClick}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        animate={
+          isShaking ? {
+            rotate: [0, -8, 8, -8, 8, 0],
+            transition: { duration: 0.6 }
+          } : heated ? {
+            y: [0, -2, 0]
+          } : isPouringFrom ? {
+            rotate: 45,
+            x: 20,
+            y: -10
+          } : {}
+        }
+        transition={heated ? { repeat: Infinity, duration: 0.5 } : {}}
+      >
       {/* Drag over indicator */}
       {isDragOver && (
         <motion.div
@@ -273,7 +277,8 @@ export default function TestTube({
           ↔️
         </div>
       )}
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
