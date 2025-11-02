@@ -40,6 +40,8 @@ export default function Dropper({
     setIsDragging(false);
   };
 
+  // Render component with native HTML5 drag-and-drop on outer div
+  // and Framer Motion animations on inner motion.div
   return (
     <div
       className={`flex flex-col items-center ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
