@@ -45,8 +45,8 @@ export default function Dropper({
       className={`flex flex-col items-center ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       onClick={handleClick}
       draggable={draggable && !disabled}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragStart={handleDragStart as any}
+      onDragEnd={handleDragEnd as any}
       whileHover={disabled ? {} : { scale: 1.05 }}
       whileTap={disabled ? {} : { scale: 0.95 }}
       animate={isDragging ? { rotate: 45, x: 20, y: -10 } : {}}
