@@ -41,16 +41,18 @@ export default function Dropper({
   };
 
   return (
-    <motion.div
+    <div
       className={`flex flex-col items-center ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-      onClick={handleClick}
       draggable={draggable && !disabled}
-      onDragStart={handleDragStart as any}
-      onDragEnd={handleDragEnd as any}
-      whileHover={disabled ? {} : { scale: 1.05 }}
-      whileTap={disabled ? {} : { scale: 0.95 }}
-      animate={isDragging ? { rotate: 45, x: 20, y: -10 } : {}}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
+      <motion.div
+        onClick={handleClick}
+        whileHover={disabled ? {} : { scale: 1.05 }}
+        whileTap={disabled ? {} : { scale: 0.95 }}
+        animate={isDragging ? { rotate: 45, x: 20, y: -10 } : {}}
+      >
       {/* Dropper */}
       <svg width="60" height="100" viewBox="0 0 60 100">
         {/* Rubber bulb */}
@@ -165,7 +167,8 @@ export default function Dropper({
           ↔️
         </div>
       )}
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
