@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Microscope, Home, FlaskConical } from 'lucide-react';
+import { Microscope, Home, FlaskConical, Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Header() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { href: '/', label: 'Trang chủ', icon: Home },
@@ -49,20 +51,45 @@ export default function Header() {
         </nav>
 
         {/* Mobile menu button */}
-        <button className="md:hidden p-2 rounded-lg hover:bg-green-50">
-          <svg
-            className="h-6 w-6 text-green-800"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
+        <button
+          className="md:hidden p-2 rounded-lg hover:bg-green-50"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? (
+            <X className="h-6 w-6 text-green-800" />
+          ) : (
+            <Menu className="h-6 w-6 text-green-800" />
+          )}
         </button>
       </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-green-200 bg-white">
+          <nav className="container mx-auto px-4 py-4 space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                    isActive
+                      ? 'bg-green-100 text-green-800 font-semibold'
+                      : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
