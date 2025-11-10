@@ -11,9 +11,9 @@ export default function Header() {
 
   const navItems = [
     { href: '/', label: 'Trang chủ', icon: Home },
-    { href: '/benedict', label: 'Benedict', icon: FlaskConical },
-    { href: '/lugol', label: 'Lugol', icon: FlaskConical },
-    { href: '/biuret', label: 'Biuret', icon: FlaskConical },
+    { href: '/benedict-interactive', label: 'Benedict', icon: FlaskConical },
+    { href: '/lugol-interactive', label: 'Lugol', icon: FlaskConical },
+    { href: '/biuret-interactive', label: 'Biuret', icon: FlaskConical },
   ];
 
   return (

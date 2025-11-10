@@ -33,17 +33,6 @@ export default function Home() {
             Khám phá thế giới sinh học và hóa học thông qua các thí nghiệm tương tác.
             Học tập an toàn, hiệu quả và thú vị!
           </p>
-
-          {/* Interactive Demo Button */}
-          <div className="mt-8">
-            <a
-              href="/benedict-interactive"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              <span className="text-lg font-semibold">🎮 Thử Phiên Bản Tương Tác!</span>
-              <span className="text-sm">(Kéo thả & trộn dung dịch)</span>
-            </a>
-          </div>
         </div>
 
         {/* Features */}
