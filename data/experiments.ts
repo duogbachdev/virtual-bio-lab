@@ -8,7 +8,7 @@ export const experiments: Experiment[] = [
     description: 'Thí nghiệm nhận biết đường khử thông qua phản ứng với thuốc thử Benedict, quan sát sự thay đổi màu từ xanh dương sang đỏ gạch.',
     icon: '🧪',
     color: 'from-blue-400 to-red-400',
-    path: '/benedict',
+    path: '/benedict-interactive',
     theory: {
       title: 'Cơ sở khoa học',
       content: 'Trong môi trường kiềm ở nhiệt độ cao, đường khử sẽ khử ion kim loại. Cụ thể, đường khử sẽ khử Cu²⁺ (màu xanh dương) tạo thành Cu₂O (kết tủa màu đỏ gạch).',
@@ -56,7 +56,7 @@ export const experiments: Experiment[] = [
     description: 'Thí nghiệm nhận biết tinh bột thông qua phản ứng với thuốc thử Lugol (iodine), quan sát sự thay đổi màu sang xanh đen.',
     icon: '🍌',
     color: 'from-yellow-400 to-indigo-900',
-    path: '/lugol',
+    path: '/lugol-interactive',
     theory: {
       title: 'Cơ sở khoa học',
       content: 'Khi trộn dung dịch chứa iodine với tinh bột, iodine sẽ đi vào bên trong chuỗi xoắn amylose của tinh bột tạo thành phức hợp có màu xanh đen.',
@@ -93,7 +93,7 @@ export const experiments: Experiment[] = [
     description: 'Thí nghiệm nhận biết protein thông qua phản ứng Biuret, quan sát sự thay đổi màu sang tím đặc trưng.',
     icon: '🥚',
     color: 'from-blue-400 to-purple-600',
-    path: '/biuret',
+    path: '/benedict-interactive',
     theory: {
       title: 'Cơ sở khoa học',
       content: 'Trong môi trường kiềm, các liên kết peptide trong phân tử protein tương tác với ion Cu²⁺ tạo thành phức chất có màu tím.',

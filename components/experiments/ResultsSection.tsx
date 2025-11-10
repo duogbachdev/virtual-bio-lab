@@ -15,7 +15,7 @@ export default function ResultsSection({
   isReportSubmitted,
   children,
   requirePassword = true,
-  password = '123456',
+  password = '190929',
 }: ResultsSectionProps) {
   const [showResults, setShowResults] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
@@ -140,9 +140,6 @@ export default function ResultsSection({
                   </motion.p>
                 )}
               </AnimatePresence>
-              <p className="text-xs text-gray-500 mt-2">
-                Gợi ý: Mật khẩu mặc định là "123456"
-              </p>
             </div>
           )}
         </div>
