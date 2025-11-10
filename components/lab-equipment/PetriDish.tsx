@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 interface PetriDishProps {
   id: string;
@@ -10,6 +11,8 @@ interface PetriDishProps {
   finalColor?: string;
   onClick?: () => void;
   selected?: boolean;
+  onDrop?: (droppedItem: string) => void;
+  draggable?: boolean;
 }
 
 export default function PetriDish({
@@ -20,18 +23,58 @@ export default function PetriDish({
   finalColor,
   onClick,
   selected = false,
+  onDrop,
+  draggable = false,
 }: PetriDishProps) {
   const displayColor = reagentAdded && finalColor ? finalColor : sampleColor;
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [isPouringFrom, setIsPouringFrom] = useState(false);
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', `dish-${id}`);
+    setIsPouringFrom(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsPouringFrom(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const droppedItem = e.dataTransfer.getData('text/plain');
+    if (onDrop) {
+      onDrop(droppedItem);
+    }
+  };
 
   return (
-    <motion.div
+    <div
       className="relative cursor-pointer"
-      onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      draggable={draggable}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
+      <motion.div
+        onClick={onClick}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        animate={isPouringFrom ? { rotate: 15, x: 10, y: -5 } : {}}
+      >
       {/* Petri dish container */}
-      <div className={`relative ${selected ? 'ring-4 ring-green-400 rounded-full' : ''}`}>
+      <div className={`relative ${selected ? 'ring-4 ring-green-400 rounded-full' : ''} ${isDragOver ? 'ring-4 ring-blue-400 rounded-full' : ''}`}>
         <svg width="150" height="150" viewBox="0 0 150 150">
           {/* Dish bottom */}
           <circle
@@ -115,13 +158,16 @@ export default function PetriDish({
           />
         </svg>
       </div>
-      
+
       {/* Label */}
       <div className="text-center mt-2">
         <p className="text-sm font-semibold text-gray-700">{label}</p>
         <p className="text-xs text-gray-500">Đĩa {id}</p>
+        {draggable && !isPouringFrom && (
+          <p className="text-xs text-blue-600">Kéo hoặc nhấn</p>
+        )}
       </div>
-      
+
       {/* Selected indicator */}
       {selected && (
         <motion.div
@@ -132,7 +178,8 @@ export default function PetriDish({
           <span className="text-white text-sm">✓</span>
         </motion.div>
       )}
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 

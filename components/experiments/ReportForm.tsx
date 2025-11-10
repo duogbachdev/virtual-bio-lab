@@ -1,14 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { FileText, Download, Save } from 'lucide-react';
+import { FileText, Download, Save, Send, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ReportFormProps {
   experimentTitle: string;
   experimentId: string;
+  onReportSubmit?: () => void;
 }
 
-export default function ReportForm({ experimentTitle, experimentId }: ReportFormProps) {
+export default function ReportForm({ experimentTitle, experimentId, onReportSubmit }: ReportFormProps) {
   const [formData, setFormData] = useState({
     groupName: '',
     studentName: '',
@@ -24,6 +26,8 @@ export default function ReportForm({ experimentTitle, experimentId }: ReportForm
   });
 
   const [saved, setSaved] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -32,10 +36,45 @@ export default function ReportForm({ experimentTitle, experimentId }: ReportForm
     });
   };
 
+  const validateAnswers = () => {
+    if (!formData.answer1.trim()) {
+      setValidationError('Vui lòng trả lời Câu 1');
+      return false;
+    }
+    if (!formData.answer2.trim()) {
+      setValidationError('Vui lòng trả lời Câu 2');
+      return false;
+    }
+    if (!formData.answer3.trim()) {
+      setValidationError('Vui lòng trả lời Câu 3');
+      return false;
+    }
+    setValidationError('');
+    return true;
+  };
+
   const handleSave = () => {
     localStorage.setItem(`report-${experimentId}`, JSON.stringify(formData));
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleSubmit = () => {
+    if (!validateAnswers()) {
+      setTimeout(() => setValidationError(''), 3000);
+      return;
+    }
+
+    // Lưu báo cáo
+    localStorage.setItem(`report-${experimentId}`, JSON.stringify(formData));
+    localStorage.setItem(`report-${experimentId}-submitted`, 'true');
+
+    setSubmitted(true);
+
+    // Gọi callback để mở khóa kết quả
+    if (onReportSubmit) {
+      onReportSubmit();
+    }
   };
 
   const handleDownload = () => {
@@ -244,12 +283,28 @@ CÂU TRẢ LỜI:
           </div>
         </div>
 
+        {/* Validation Error */}
+        <AnimatePresence>
+          {validationError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="bg-red-50 border-2 border-red-300 rounded-lg p-4 flex items-center space-x-2"
+            >
+              <AlertCircle className="h-5 w-5 text-red-600" />
+              <p className="text-red-700 font-semibold">{validationError}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             type="button"
             onClick={handleSave}
-            className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            disabled={submitted}
+            className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="h-5 w-5" />
             <span>{saved ? 'Đã lưu!' : 'Lưu báo cáo'}</span>
@@ -257,19 +312,47 @@ CÂU TRẢ LỜI:
 
           <button
             type="button"
+            onClick={handleSubmit}
+            disabled={submitted}
+            className="flex items-center justify-center space-x-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          >
+            <Send className="h-5 w-5" />
+            <span>{submitted ? '✓ Đã gửi!' : 'Gửi Báo Cáo'}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleDownload}
-            className="flex items-center justify-center space-x-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            className="flex items-center justify-center space-x-2 px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
           >
             <Download className="h-5 w-5" />
             <span>Tải xuống</span>
           </button>
         </div>
 
-        {saved && (
-          <div className="text-center text-green-600 font-semibold">
-            ✓ Báo cáo đã được lưu vào trình duyệt!
-          </div>
-        )}
+        {/* Status Messages */}
+        <div className="space-y-2">
+          {saved && !submitted && (
+            <div className="text-center text-blue-600 font-semibold">
+              ✓ Báo cáo đã được lưu vào trình duyệt!
+            </div>
+          )}
+
+          {submitted && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-green-50 border-2 border-green-300 rounded-lg p-4 text-center"
+            >
+              <p className="text-green-700 font-bold text-lg">
+                ✓ Báo cáo đã được gửi thành công!
+              </p>
+              <p className="text-green-600 text-sm mt-1">
+                Kết quả thí nghiệm đã được mở khóa. Cuộn lên để xem kết quả.
+              </p>
+            </motion.div>
+          )}
+        </div>
       </form>
     </div>
   );

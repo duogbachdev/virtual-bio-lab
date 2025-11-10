@@ -7,12 +7,15 @@ import Footer from '@/components/layout/Footer';
 import TestTube from '@/components/lab-equipment/TestTube';
 import Burner from '@/components/lab-equipment/Burner';
 import Dropper from '@/components/lab-equipment/Dropper';
-import { getBenedictSamples } from '@/data/experiments';
+import ResultsSection from '@/components/experiments/ResultsSection';
+import ReportForm from '@/components/experiments/ReportForm';
+import { experiments, getBenedictSamples } from '@/data/experiments';
 import { ArrowRight, RotateCcw, CheckCircle, Info } from 'lucide-react';
 
 export default function BenedictInteractivePage() {
+  const experiment = experiments.find(e => e.id === 'benedict')!;
   const samples = getBenedictSamples();
-  
+
   const [tubes, setTubes] = useState([
     { id: '1', sample: samples[0], liquidLevel: 50, color: samples[0].initialColor, reagentAdded: false, heated: false },
     { id: '2', sample: samples[1], liquidLevel: 50, color: samples[1].initialColor, reagentAdded: false, heated: false },
@@ -22,6 +25,7 @@ export default function BenedictInteractivePage() {
 
   const [burnerOn, setBurnerOn] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [isReportSubmitted, setIsReportSubmitted] = useState(false);
 
   const handleDropOnTube = (tubeId: string, droppedItem: string) => {
     if (droppedItem === 'benedict-reagent') {
@@ -71,6 +75,17 @@ export default function BenedictInteractivePage() {
     ]);
     setBurnerOn(false);
     setShowResults(false);
+  };
+
+  const handleReportSubmit = () => {
+    setIsReportSubmitted(true);
+    // Scroll to results
+    setTimeout(() => {
+      const resultsElement = document.getElementById('results-section');
+      if (resultsElement) {
+        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const allTubesHaveReagent = tubes.every(t => t.reagentAdded);
@@ -187,28 +202,24 @@ export default function BenedictInteractivePage() {
           </div>
         </div>
 
-        {/* Results */}
-        <AnimatePresence>
-          {showResults && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-green-50 rounded-lg p-6 border-2 border-green-300 mb-6"
-            >
-              <div className="flex items-center space-x-2 mb-4">
-                <CheckCircle className="h-6 w-6 text-green-600" />
-                <h3 className="text-xl font-bold text-green-800">Kết Quả Thí Nghiệm</h3>
-              </div>
-              
+        {/* Results Section with Password Protection */}
+        <div id="results-section" className="mb-6">
+          <ResultsSection isReportSubmitted={isReportSubmitted}>
+            <div className="bg-white rounded-xl border-2 border-green-200 p-6">
+              <h2 className="text-2xl font-bold text-green-800 mb-6 flex items-center space-x-2">
+                <CheckCircle className="h-7 w-7" />
+                <span>Kết Quả Thí Nghiệm</span>
+              </h2>
+
               <div className="space-y-3">
                 {tubes.map((tube) => (
-                  <div key={tube.id} className="flex items-center justify-between bg-white rounded-lg p-3">
+                  <div key={tube.id} className="flex items-center justify-between bg-white rounded-lg p-3 border-2 border-gray-200">
                     <div className="flex items-center space-x-3">
                       <span className="font-semibold text-gray-700">Ống {tube.id}:</span>
                       <span className="text-gray-600">{tube.sample.name}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div 
+                      <div
                         className="w-8 h-8 rounded-full border-2 border-gray-300"
                         style={{ backgroundColor: tube.color }}
                       />
@@ -223,19 +234,39 @@ export default function BenedictInteractivePage() {
               </div>
 
               <div className="mt-6 bg-blue-50 rounded-lg p-4">
-                <p className="text-sm font-semibold text-blue-800 mb-2">Giải thích:</p>
+                <h3 className="font-bold text-blue-800 mb-2">Giải thích:</h3>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li>• <strong>Glucose và dịch quả</strong> chứa đường khử → màu đỏ gạch (Cu₂O)</li>
                   <li>• <strong>Sucrose</strong> không phải đường khử → giữ màu xanh (Cu²⁺)</li>
                   <li>• <strong>Nước cất</strong> là mẫu đối chứng → không có phản ứng</li>
                 </ul>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </ResultsSection>
+        </div>
+
+        {/* Questions Section */}
+        <div className="bg-white rounded-xl border-2 border-purple-200 p-6 mb-6">
+          <h2 className="text-2xl font-bold text-purple-800 mb-4">Câu Hỏi Thảo Luận</h2>
+          <div className="space-y-4">
+            {experiment.questions.map((question, index) => (
+              <div key={index} className="bg-purple-50 rounded-lg p-4">
+                <p className="font-semibold text-purple-800 mb-2">Câu {index + 1}:</p>
+                <p className="text-gray-700">{question}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Report Form */}
+        <ReportForm
+          experimentTitle={experiment.title}
+          experimentId={experiment.id}
+          onReportSubmit={handleReportSubmit}
+        />
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={handleReset}
             className="flex items-center space-x-2 px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors shadow-lg"
@@ -243,19 +274,17 @@ export default function BenedictInteractivePage() {
             <RotateCcw className="h-5 w-5" />
             <span>Làm lại</span>
           </button>
-          
-          {showResults && (
-            <button
-              onClick={() => window.location.href = '/benedict'}
-              className="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg"
-            >
-              <span>Xem phiên bản đơn giản</span>
-              <ArrowRight className="h-5 w-5" />
-            </button>
-          )}
+
+          <button
+            onClick={() => window.location.href = '/benedict'}
+            className="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg"
+          >
+            <span>Xem phiên bản đơn giản</span>
+            <ArrowRight className="h-5 w-5" />
+          </button>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
